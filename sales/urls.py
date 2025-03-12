@@ -1,7 +1,6 @@
 from django.urls import path
 from .views import admin_dashboard, sales_dashboard
 from .views import sales_dashboard, enroll_student, record_payment, view_pending_payments,sales_home ,create_pending_payment
-
 urlpatterns = [
     path('admin_dashboard/', admin_dashboard, name='admin_dashboard'),
     path('', sales_dashboard, name='sales_dashboard'),
