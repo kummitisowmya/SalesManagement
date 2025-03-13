@@ -32,30 +32,32 @@ def user_logout(request):
 
 # accounts/views.py
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.models import User
-from sales.models import SalesPerson  # Correct import
+from .models import CustomUser  # Import your CustomUser model
 
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         username = request.POST['username']
         email = request.POST['email']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
 
         if password1 == password2:
-            # Create the user
-            user = User.objects.create_user(username=username, email=email, password=password1)
+            # Create the user using CustomUser
+            user = CustomUser.objects.create_user(username=username, email=email, password=password1)
             user.save()
-
-            # Create a SalesPerson object for the user
-            SalesPerson.objects.create(user=user)
 
             # Log the user in
             login(request, user)
 
-            # Redirect to the sales dashboard
-            return redirect('sales_dashboard')
+            # Redirect to the appropriate dashboard based on role
+            if user.role == 'admin':
+                return redirect('admin_dashboard')
+            elif user.role == 'sales':
+                return redirect('sales_dashboard')
+            else:
+                return redirect('home')
         else:
             messages.error(request, "Passwords do not match.")
     return render(request, 'register.html')
