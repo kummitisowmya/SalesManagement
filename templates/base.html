@@ -4,23 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sales Management{% endblock %}</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
 </head>
 <body>
- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">Code Bug</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <!-- Brand/Logo -->
+            <a class="navbar-brand" href="{% if user.is_authenticated and user.role == 'sales' %}{% url 'sales_dashboard' %}{% else %}{% url 'home' %}{% endif %}">
+                Sales Management
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Home or Sales Dashboard Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% if user.is_authenticated and user.role == 'sales' %}{% url 'sales_dashboard' %}{% else %}{% url 'home' %}{% endif %}">
+                            {% if user.is_authenticated and user.role == 'sales' %}Sales Dashboard{% else %}Home{% endif %}
+                        </a>
+                    </li>
 
-    <div class="ml-auto">
-        <span class="text-white me-3">Welcome, {{ request.user.get_full_name|default:request.user.username }}</span>
-        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
-    </div>
-</nav>
+                    <!-- Links for Authenticated Sales Users -->
+                    {% if user.is_authenticated and user.role == 'sales' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'enroll_student' %}">Enroll Student</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_pending_payments' %}">Pending Payments</a>
+                        </li>
+                    {% endif %}
 
+                    <!-- Links for Authenticated Admin Users -->
+                    {% if user.is_authenticated and user.role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+                        </li>
+                    {% endif %}
 
+                    <!-- Logout Link for Authenticated Users -->
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <!-- Login and Register Links for Unauthenticated Users -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
     <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
