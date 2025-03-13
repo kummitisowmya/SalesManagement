@@ -1,10 +1,27 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Home | Sales Management{% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>Welcome to Sales Management System</h2>
-    <p>This is the home page. Use the navigation bar to login or register.</p>
+<div class="hero">
+    <div class="overlay">
+        <div class="content">
+            <h1>Welcome to Our Institute</h1>
+            <p>Providing high-quality education to help you achieve your goals.</p>
+            <div class="buttons">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'sales_dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-success btn-lg">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
